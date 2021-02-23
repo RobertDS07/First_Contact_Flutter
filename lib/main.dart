@@ -1,90 +1,76 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MaterialApp(
-      title: 'Contador de pessoas',
-      home: Stack(
-        children: [
-          Opacity(
-            opacity: .3,
-            child: Image.asset(
-              "assets/restaurante.jpg",
-              fit: BoxFit.cover,
-              height: 1000.0,
-            ),
-          ),
-          Container(
-            child: Contador(),
-          )
-        ],
-      )));
-}
+void main() => runApp(MaterialApp(
+      title: 'A simple calculator',
+      home: Home(),
+    ));
 
-class Contador extends StatefulWidget {
+class Home extends StatelessWidget {
   @override
-  _ContadorState createState() => _ContadorState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('A simple calculator'),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
+      ),
+      body: Calculator(),
+    );
+  }
 }
 
-class _ContadorState extends State<Contador> {
-  int pessoas = 0;
+class Calculator extends StatefulWidget {
+  @override
+  _CalculatorState createState() => _CalculatorState();
+}
 
-  void _addPessoas() {
-    setState(() {
-      pessoas += 1;
-    });
-  }
-
-  void _removePessoas() {
-    setState(() {
-      if (pessoas == 0) return;
-      pessoas -= 1;
-    });
-  }
+class _CalculatorState extends State<Calculator> {
+  dynamic result = 0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Total de pessoas $pessoas',
-          style: TextStyle(
-              fontSize: 20,
-              color: Colors.white,
-              decoration: TextDecoration.none),
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FlatButton(
-                onPressed: _addPessoas,
-                child: Text(
-                  '+1',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                ),
+        Container(
+            color: Colors.grey,
+            height: 100,
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Text(
+                '$result',
+                textAlign: TextAlign.right,
+                style: TextStyle(fontSize: 90, fontWeight: FontWeight.bold),
               ),
-              FlatButton(
-                onPressed: _removePessoas,
-                child: Text('-1',
-                    style: TextStyle(color: Colors.white, fontSize: 30)),
-              )
-            ],
-          ),
-        ),
-        status(pessoas)
+            )),
+        GridView.count(
+          padding: const EdgeInsets.all(10),
+          crossAxisCount: 3,
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          children: [CustomButton('1')],
+        )
       ],
     );
   }
 }
 
-Widget status(int pessoas) {
-  String statusText =
-      pessoas >= 0 && pessoas <= 10 ? 'Pode entrar!' : 'Estamos cheio!';
-  return Text(
-    statusText,
-    style: TextStyle(
-        fontSize: 20, color: Colors.white, decoration: TextDecoration.none),
-  );
+class CustomButton extends StatelessWidget {
+  final hotkey;
+
+  CustomButton(this.hotkey);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+          splashColor: Colors.grey.withAlpha(40),
+          onTap: () {
+            print('Card tapped.');
+          },
+          child: Center(
+            child: Text('$hotkey'),
+          )),
+    );
+  }
 }
