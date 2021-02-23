@@ -48,7 +48,10 @@ class _ContadorState extends State<Contador> {
       children: [
         Text(
           'Total de pessoas $pessoas',
-          style: TextStyle(fontSize: 20, color: Colors.white),
+          style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              decoration: TextDecoration.none),
         ),
         Padding(
           padding: EdgeInsets.all(10),
@@ -81,6 +84,7 @@ Widget status(int pessoas) {
       pessoas >= 0 && pessoas <= 10 ? 'Pode entrar!' : 'Estamos cheio!';
   return Text(
     statusText,
-    style: TextStyle(fontSize: 20, color: Colors.white),
+    style: TextStyle(
+        fontSize: 20, color: Colors.white, decoration: TextDecoration.none),
   );
 }
