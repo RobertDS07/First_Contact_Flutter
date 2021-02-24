@@ -5,11 +5,11 @@ import 'dart:async';
 
 void main() => runApp(MaterialApp(
       title: 'Currency converter',
+      home: Home(),
       theme: ThemeData(
         primaryColor: Colors.white,
         hintColor: Colors.amber,
       ),
-      home: Home(),
     ));
 
 class Home extends StatelessWidget {
@@ -43,6 +43,23 @@ class Convertor extends StatefulWidget {
 }
 
 class _ConvertorState extends State<Convertor> {
+  final reaisController = TextEditingController();
+  final euroController = TextEditingController();
+
+  void onRealChange(value, AsyncSnapshot res) {
+    double buyPrice = res.data['results']['currencies']['EUR']['buy'];
+
+    euroController.value =
+        TextEditingValue(text: '${double.parse(value) * buyPrice}');
+  }
+
+  void onEuroChange(value, AsyncSnapshot res) {
+    double buyPrice = res.data['results']['currencies']['EUR']['buy'];
+
+    reaisController.value =
+        TextEditingValue(text: '${double.parse(value) * buyPrice}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -63,7 +80,14 @@ class _ConvertorState extends State<Convertor> {
                 child: Text('Erro...'),
               );
             }
-            return CustomTextField('R\$', 'reais');
+            return (Column(
+              children: [
+                CustomTextField('R\$ ', 'Reais', reaisController,
+                    (value) => onRealChange(value, snapshot)),
+                CustomTextField('€ ', 'Euros', euroController,
+                    (value) => onEuroChange(value, snapshot))
+              ],
+            ));
         }
       },
     );
@@ -80,17 +104,29 @@ Future<Map> getData() async {
 
 class CustomTextField extends StatelessWidget {
   final String prefix, label;
+  final controller, onChange;
 
-  CustomTextField(this.prefix, this.label);
+  CustomTextField(this.prefix, this.label, this.controller, this.onChange);
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      keyboardType: TextInputType.number,
-      decoration: InputDecoration(
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: TextField(
+        controller: controller,
+        onChanged: onChange,
+        keyboardType: TextInputType.number,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
           prefix: Text(prefix),
           labelText: label,
-          labelStyle: TextStyle(color: Colors.amber)),
+          labelStyle: TextStyle(color: Colors.amber),
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.amber)),
+          border:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+        ),
+      ),
     );
   }
 }
