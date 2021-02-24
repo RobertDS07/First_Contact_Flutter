@@ -5,7 +5,10 @@ import 'dart:async';
 
 void main() => runApp(MaterialApp(
       title: 'Currency converter',
-      theme: ThemeData(primaryColor: Colors.white, hintColor: Colors.amber),
+      theme: ThemeData(
+        primaryColor: Colors.white,
+        hintColor: Colors.amber,
+      ),
       home: Home(),
     ));
 
@@ -36,16 +39,58 @@ class Home extends StatelessWidget {
 
 class Convertor extends StatefulWidget {
   @override
-  _ConvertorState createState() => _ConvertorState()
+  _ConvertorState createState() => _ConvertorState();
 }
 
 class _ConvertorState extends State<Convertor> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(builder: null)
+    return FutureBuilder(
+      future: getData(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case (ConnectionState.none):
+          case (ConnectionState.waiting):
+            return Center(
+              child: Text(
+                'Carregando...',
+                style: TextStyle(color: Colors.amber, fontSize: 30),
+              ),
+            );
+          default:
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Erro...'),
+              );
+            }
+            return CustomTextField('R\$', 'reais');
+        }
+      },
+    );
   }
 }
 
-Future<map> getData() {
-  http.get()
+Future<Map> getData() async {
+  http.Response res = await http.get('https://api.hgbrasil.com/finance');
+
+  Map compiledRes = json.decode(res.body);
+
+  return compiledRes;
+}
+
+class CustomTextField extends StatelessWidget {
+  final String prefix, label;
+
+  CustomTextField(this.prefix, this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      keyboardType: TextInputType.number,
+      decoration: InputDecoration(
+          prefix: Text(prefix),
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.amber)),
+    );
+  }
 }
